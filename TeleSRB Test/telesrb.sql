@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 05, 2019 at 04:19 PM
+-- Generation Time: Aug 16, 2019 at 12:03 PM
 -- Server version: 10.1.40-MariaDB
 -- PHP Version: 7.3.5
 
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `broj_telefona` (
   `id_broj_telefona` int(11) NOT NULL,
   `numeracija` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` tinyint(1) NOT NULL
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -51,15 +51,15 @@ CREATE TABLE `paket` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pripajd_dodatna_oprema`
+-- Table structure for table `pripaid_dodatna_oprema`
 --
 
-CREATE TABLE `pripajd_dodatna_oprema` (
-  `id_pripejd_oprema` int(11) NOT NULL,
-  `naziv` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cena` float NOT NULL,
+CREATE TABLE `pripaid_dodatna_oprema` (
+  `id_pripaid_oprema` int(11) NOT NULL,
   `tip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `opis` text COLLATE utf8mb4_unicode_ci NOT NULL
+  `naziv` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `opis` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cena` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -73,7 +73,7 @@ CREATE TABLE `racun` (
   `datum` date NOT NULL,
   `id_user` int(11) NOT NULL,
   `id_ugovor` int(11) NOT NULL,
-  `status_racuna` int(11) NOT NULL
+  `status_racuna` varchar(225) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -85,17 +85,17 @@ CREATE TABLE `racun` (
 CREATE TABLE `stavke` (
   `id_stavke` int(11) NOT NULL,
   `id_racun` int(11) NOT NULL,
-  `id_pripejd_opreme` int(11) NOT NULL,
+  `id_pripaid_opreme` int(11) NOT NULL,
   `kolicina` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ugovor_postpejd`
+-- Table structure for table `ugovor_postpaid`
 --
 
-CREATE TABLE `ugovor_postpejd` (
+CREATE TABLE `ugovor_postpaid` (
   `id_udovor` int(11) NOT NULL,
   `datum_pocetka` date NOT NULL,
   `datum_isteka` date NOT NULL,
@@ -129,12 +129,21 @@ CREATE TABLE `user` (
   `id_user` int(11) NOT NULL,
   `ime` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `prezime` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `broj_telefona` int(11) NOT NULL,
+  `broj_telefona` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_tip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `adresa` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id_user`, `ime`, `prezime`, `broj_telefona`, `password`, `email`, `user_tip`, `adresa`) VALUES
+(1, 'Darko', 'Nikolic', '0000', '0000', 'darko@yahoo.com', 'admin', 'trg'),
+(2, 'Petar', 'Milic', '0123456789', '0123456789', 'petar@gmail.com', 'korisnik', 'Cara Lazara'),
+(3, 'Ana', 'Topic', '9876543210', '9876543210', 'ana@live.com', 'prodavac', 'Milosa Velikog');
 
 --
 -- Indexes for dumped tables
@@ -153,10 +162,10 @@ ALTER TABLE `paket`
   ADD PRIMARY KEY (`id_paket`);
 
 --
--- Indexes for table `pripajd_dodatna_oprema`
+-- Indexes for table `pripaid_dodatna_oprema`
 --
-ALTER TABLE `pripajd_dodatna_oprema`
-  ADD PRIMARY KEY (`id_pripejd_oprema`);
+ALTER TABLE `pripaid_dodatna_oprema`
+  ADD PRIMARY KEY (`id_pripaid_oprema`);
 
 --
 -- Indexes for table `racun`
@@ -172,12 +181,12 @@ ALTER TABLE `racun`
 ALTER TABLE `stavke`
   ADD PRIMARY KEY (`id_stavke`,`id_racun`),
   ADD KEY `id_racun` (`id_racun`),
-  ADD KEY `id_pripejd_opreme` (`id_pripejd_opreme`);
+  ADD KEY `id_pripejd_opreme` (`id_pripaid_opreme`);
 
 --
--- Indexes for table `ugovor_postpejd`
+-- Indexes for table `ugovor_postpaid`
 --
-ALTER TABLE `ugovor_postpejd`
+ALTER TABLE `ugovor_postpaid`
   ADD PRIMARY KEY (`id_udovor`),
   ADD KEY `id_uredjaj` (`id_uredjaj`,`id_paket`,`id_broj_telefona`),
   ADD KEY `id_paket` (`id_paket`),
@@ -213,10 +222,10 @@ ALTER TABLE `paket`
   MODIFY `id_paket` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `pripajd_dodatna_oprema`
+-- AUTO_INCREMENT for table `pripaid_dodatna_oprema`
 --
-ALTER TABLE `pripajd_dodatna_oprema`
-  MODIFY `id_pripejd_oprema` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `pripaid_dodatna_oprema`
+  MODIFY `id_pripaid_oprema` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `racun`
@@ -231,9 +240,9 @@ ALTER TABLE `stavke`
   MODIFY `id_stavke` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ugovor_postpejd`
+-- AUTO_INCREMENT for table `ugovor_postpaid`
 --
-ALTER TABLE `ugovor_postpejd`
+ALTER TABLE `ugovor_postpaid`
   MODIFY `id_udovor` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -246,7 +255,7 @@ ALTER TABLE `uredjaj`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -256,23 +265,22 @@ ALTER TABLE `user`
 -- Constraints for table `racun`
 --
 ALTER TABLE `racun`
-  ADD CONSTRAINT `racun_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`),
-  ADD CONSTRAINT `racun_ibfk_3` FOREIGN KEY (`id_ugovor`) REFERENCES `ugovor_postpejd` (`id_udovor`);
+  ADD CONSTRAINT `racun_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`);
 
 --
 -- Constraints for table `stavke`
 --
 ALTER TABLE `stavke`
-  ADD CONSTRAINT `stavke_ibfk_3` FOREIGN KEY (`id_pripejd_opreme`) REFERENCES `pripajd_dodatna_oprema` (`id_pripejd_oprema`),
-  ADD CONSTRAINT `stavke_ibfk_4` FOREIGN KEY (`id_racun`) REFERENCES `racun` (`id_racun`);
+  ADD CONSTRAINT `stavke_ibfk_4` FOREIGN KEY (`id_racun`) REFERENCES `racun` (`id_racun`),
+  ADD CONSTRAINT `stavke_ibfk_5` FOREIGN KEY (`id_pripaid_opreme`) REFERENCES `pripaid_dodatna_oprema` (`id_pripaid_oprema`);
 
 --
--- Constraints for table `ugovor_postpejd`
+-- Constraints for table `ugovor_postpaid`
 --
-ALTER TABLE `ugovor_postpejd`
-  ADD CONSTRAINT `ugovor_postpejd_ibfk_3` FOREIGN KEY (`id_broj_telefona`) REFERENCES `broj_telefona` (`id_broj_telefona`),
-  ADD CONSTRAINT `ugovor_postpejd_ibfk_4` FOREIGN KEY (`id_paket`) REFERENCES `uredjaj` (`id_paket`),
-  ADD CONSTRAINT `ugovor_postpejd_ibfk_5` FOREIGN KEY (`id_uredjaj`) REFERENCES `uredjaj` (`id_uredjaj`);
+ALTER TABLE `ugovor_postpaid`
+  ADD CONSTRAINT `ugovor_postpaid_ibfk_1` FOREIGN KEY (`id_broj_telefona`) REFERENCES `broj_telefona` (`id_broj_telefona`),
+  ADD CONSTRAINT `ugovor_postpaid_ibfk_2` FOREIGN KEY (`id_uredjaj`) REFERENCES `uredjaj` (`id_uredjaj`),
+  ADD CONSTRAINT `ugovor_postpaid_ibfk_3` FOREIGN KEY (`id_paket`) REFERENCES `uredjaj` (`id_paket`);
 
 --
 -- Constraints for table `uredjaj`

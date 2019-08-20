@@ -13,8 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class JFrameDodatnaOpremaIPriPaid extends JFrame {
+public class JFramePripaidIDodatnaOprema extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tableDodatnaOpremaIPriPaid;
@@ -27,7 +31,7 @@ public class JFrameDodatnaOpremaIPriPaid extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JFrameDodatnaOpremaIPriPaid frame = new JFrameDodatnaOpremaIPriPaid();
+					JFramePripaidIDodatnaOprema frame = new JFramePripaidIDodatnaOprema();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -39,8 +43,8 @@ public class JFrameDodatnaOpremaIPriPaid extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public JFrameDodatnaOpremaIPriPaid() {
-		setTitle("TeleSRB - Dodatna oprema i PriPaid");
+	public JFramePripaidIDodatnaOprema() {
+		setTitle("TeleSRB - Pripaid i dodatna oprema");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 796, 500);
 		contentPane = new JPanel();
@@ -48,42 +52,52 @@ public class JFrameDodatnaOpremaIPriPaid extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel panelDOIPPDodatnaOpremaIPriPaid = new JPanel();
-		panelDOIPPDodatnaOpremaIPriPaid.setBorder(new TitledBorder(null, "Dodatna oprema i PriPaid", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelDOIPPDodatnaOpremaIPriPaid.setBounds(50, 50, 680, 325);
-		contentPane.add(panelDOIPPDodatnaOpremaIPriPaid);
-		panelDOIPPDodatnaOpremaIPriPaid.setLayout(null);
+		JPanel panelPIDOPPripaidIDodatnaOprema = new JPanel();
+		panelPIDOPPripaidIDodatnaOprema.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Pripaid i dodatna oprema", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelPIDOPPripaidIDodatnaOprema.setBounds(50, 50, 680, 325);
+		contentPane.add(panelPIDOPPripaidIDodatnaOprema);
+		panelPIDOPPripaidIDodatnaOprema.setLayout(null);
 		
 		JScrollPane scrollPaneDodatnaOpremaIPriPaid = new JScrollPane();
 		scrollPaneDodatnaOpremaIPriPaid.setBounds(30, 30, 620, 200);
-		panelDOIPPDodatnaOpremaIPriPaid.add(scrollPaneDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(scrollPaneDodatnaOpremaIPriPaid);
 		
 		tableDodatnaOpremaIPriPaid = new JTable();
 		scrollPaneDodatnaOpremaIPriPaid.setViewportView(tableDodatnaOpremaIPriPaid);
 		
 		JLabel lblNazivDodatnaOpremaIPriPaid = new JLabel("Naziv");
 		lblNazivDodatnaOpremaIPriPaid.setBounds(50, 250, 100, 15);
-		panelDOIPPDodatnaOpremaIPriPaid.add(lblNazivDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(lblNazivDodatnaOpremaIPriPaid);
 		
 		JComboBox comboBoxNazivDodatnaOpremaIPriPaid = new JComboBox();
 		comboBoxNazivDodatnaOpremaIPriPaid.setBounds(50, 270, 150, 25);
-		panelDOIPPDodatnaOpremaIPriPaid.add(comboBoxNazivDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(comboBoxNazivDodatnaOpremaIPriPaid);
 		
 		JLabel lblKolicinaDodatnaOpremaIPriPaid = new JLabel("Kolicina:");
 		lblKolicinaDodatnaOpremaIPriPaid.setBounds(250, 250, 100, 15);
-		panelDOIPPDodatnaOpremaIPriPaid.add(lblKolicinaDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(lblKolicinaDodatnaOpremaIPriPaid);
 		
 		textFieldKolicinaDodatnaOpremaIPriPaid = new JTextField();
 		textFieldKolicinaDodatnaOpremaIPriPaid.setBounds(250, 270, 100, 25);
-		panelDOIPPDodatnaOpremaIPriPaid.add(textFieldKolicinaDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(textFieldKolicinaDodatnaOpremaIPriPaid);
 		textFieldKolicinaDodatnaOpremaIPriPaid.setColumns(10);
 		
 		JButton btnDodajUKorpuDodatnaOpremaIPriPaid = new JButton("Dodaj u korpu");
 		btnDodajUKorpuDodatnaOpremaIPriPaid.setBounds(400, 270, 120, 25);
-		panelDOIPPDodatnaOpremaIPriPaid.add(btnDodajUKorpuDodatnaOpremaIPriPaid);
+		panelPIDOPPripaidIDodatnaOprema.add(btnDodajUKorpuDodatnaOpremaIPriPaid);
 		
-		JButton btnNazadDodatnaOpremaIPriPaid = new JButton("Nazad");
-		btnNazadDodatnaOpremaIPriPaid.setBounds(610, 410, 100, 25);
-		contentPane.add(btnNazadDodatnaOpremaIPriPaid);
+		JButton btnZatvorNazadOpremaIPriPaid = new JButton("Nazad");
+		btnZatvorNazadOpremaIPriPaid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
+		btnZatvorNazadOpremaIPriPaid.setBounds(610, 410, 100, 25);
+		contentPane.add(btnZatvorNazadOpremaIPriPaid);
 	}
+	
+	//METODA KOJA ZATVARA TRENUTNI FRAJM
+		public void close(){
+			this.setVisible(false);
+		}
 }

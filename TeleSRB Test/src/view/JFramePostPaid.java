@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JRadioButton;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JFramePostPaid extends JFrame {
 
@@ -138,9 +140,14 @@ public class JFramePostPaid extends JFrame {
 		btnDidajUKorpuPostPaid.setBounds(600, 427, 110, 25);
 		panelPostPaidPP.add(btnDidajUKorpuPostPaid);
 		
-		JButton btnNazad = new JButton("Nazad");
-		btnNazad.setBounds(600, 467, 110, 25);
-		panelPostPaidPP.add(btnNazad);
+		JButton btnNazadPostPaid = new JButton("Nazad");
+		btnNazadPostPaid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
+		btnNazadPostPaid.setBounds(600, 467, 110, 25);
+		panelPostPaidPP.add(btnNazadPostPaid);
 		
 		JLabel lblBrojRataPostPaid = new JLabel("Broj rata:");
 		lblBrojRataPostPaid.setBounds(50, 390, 50, 15);
@@ -159,4 +166,9 @@ public class JFramePostPaid extends JFrame {
 		labelMesecnaRataPostPaid.setBounds(410, 430, 70, 15);
 		panelPostPaidPP.add(labelMesecnaRataPostPaid);
 	}
+	
+	//METODA KOJA ZATVARA TRENUTNI FRAJM
+			public void close(){
+				this.setVisible(false);
+			}
 }

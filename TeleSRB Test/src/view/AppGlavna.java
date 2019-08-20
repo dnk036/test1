@@ -5,16 +5,32 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.HeadlessException;
+
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
 import javax.swing.border.TitledBorder;
+
+import dao.DAOUser;
+import kontroler.Kontroler;
+import model.BrojTelefona;
+import model.User;
+
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 public class AppGlavna {
 
@@ -34,6 +50,16 @@ public class AppGlavna {
 	private JTextField textFieldEmailRR;
 	private JTextField textFieldAdresaRR;
 	private JTable tableKorpaKorisnik;
+	
+	private JPanel panelRegistracijaKorisnika;
+	private JPanel panelLogIn;
+	public User logedIn = null;
+	private JPanel panelAdmin;
+	private JPanel panelProdavac;
+	private JPanel panelKorisnik;
+	
+	private JRadioButton rdbtnProdavacRR;
+	private JRadioButton rdbtnAdminRR;
 
 	/**
 	 * Launch the application.
@@ -78,21 +104,41 @@ public class AppGlavna {
 		panelGlavna.add(lblTelesrbGlavna);
 		
 		JButton btnNoviKorisnikGlavna = new JButton("Novi korisnik");
+		btnNoviKorisnikGlavna.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelGlavna.setVisible(false);
+				panelRegistracijaKorisnika.setVisible(true);
+			}
+		});
 		btnNoviKorisnikGlavna.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnNoviKorisnikGlavna.setBounds(87, 108, 175, 44);
 		panelGlavna.add(btnNoviKorisnikGlavna);
 		
 		JButton btnPostojeciKorisnikGlavna = new JButton("Postojeci korisnik");
+		btnPostojeciKorisnikGlavna.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelGlavna.setVisible(false);
+				panelLogIn.setVisible(true);
+			}
+		});
 		btnPostojeciKorisnikGlavna.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnPostojeciKorisnikGlavna.setBounds(418, 108, 175, 44);
 		panelGlavna.add(btnPostojeciKorisnikGlavna);
 		
-		JButton btnDodatnaOpremaIPripaidGlavna = new JButton("Dodatna oprema i prepaid");
-		btnDodatnaOpremaIPripaidGlavna.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnDodatnaOpremaIPripaidGlavna.setBounds(211, 256, 257, 44);
-		panelGlavna.add(btnDodatnaOpremaIPripaidGlavna);
+		JButton btnPripaidIDodatnaOpremaGlavna = new JButton("Pripaid i dodatna oprema");
+		btnPripaidIDodatnaOpremaGlavna.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePripaidIDodatnaOprema dopp = new JFramePripaidIDodatnaOprema();
+				
+				System.out.println();
+				dopp.show();
+			}
+		});
+		btnPripaidIDodatnaOpremaGlavna.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnPripaidIDodatnaOpremaGlavna.setBounds(211, 256, 257, 44);
+		panelGlavna.add(btnPripaidIDodatnaOpremaGlavna);
 		
-		JPanel panelLogIn = new JPanel();
+		panelLogIn = new JPanel();
 		frmTelesrb.getContentPane().add(panelLogIn, "name_8206257333325");
 		panelLogIn.setLayout(null);
 		
@@ -121,14 +167,79 @@ public class AppGlavna {
 		textFieldLozinkaLogIn.setColumns(10);
 		
 		JButton btnPrijaviSeLogIn = new JButton("Prijavi se");
+		btnPrijaviSeLogIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String brojTelefona = textFieldBrojTelefonaLogIn.getText().trim();
+					String lozinka = textFieldLozinkaLogIn.getText().trim();
+					
+					ArrayList<User> user = Kontroler.getInstance().getUser();
+					for (User u : user) {
+						if(u.getBrojTelefona().equals(brojTelefona) && u.getPassword().equals(lozinka)) {
+							if(u.getUserTip().equals("admin")) {
+								System.out.println("ADMIN");
+								logedIn = u;
+								
+								System.out.println(logedIn.getBrojTelefona());
+								
+								panelAdmin.setVisible(true);
+								panelLogIn.setVisible(false);
+								
+							} else if (u.getUserTip().equals("prodavac")) {
+								System.out.println("PRODAVAC");
+								logedIn = u;
+								
+								System.out.println(logedIn.getBrojTelefona());
+								
+								panelLogIn.setVisible(false);
+								panelProdavac.setVisible(true);
+							
+							} else if (u.getUserTip().equals("korisnik")) {
+								System.out.println("KORISNIK");
+								logedIn = u;
+							
+								System.out.println(logedIn.getBrojTelefona());
+							
+								panelLogIn.setVisible(false);
+								panelKorisnik.setVisible(true);
+							} else {
+								JOptionPane.showMessageDialog(panelLogIn," Pogresan tip usera");
+							}
+							break;
+						}
+					}
+					if(logedIn == null) {
+						JOptionPane.showMessageDialog(panelLogIn, "Pogresan broj telefona ili lozinka");
+					}
+				
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
+			}
+		});
 		btnPrijaviSeLogIn.setBounds(145, 170, 100, 25);
 		panelLogovanjeLogIn.add(btnPrijaviSeLogIn);
 		
 		JButton btnNazadLogIn = new JButton("Nazad");
+		btnNazadLogIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelLogIn.setVisible(false);
+				panelGlavna.setVisible(true);
+			}
+		});
 		btnNazadLogIn.setBounds(145, 225, 100, 25);
 		panelLogovanjeLogIn.add(btnNazadLogIn);
 		
-		JPanel panelRegistracijaKorisnika = new JPanel();
+		panelRegistracijaKorisnika = new JPanel();
 		frmTelesrb.getContentPane().add(panelRegistracijaKorisnika, "name_8243365967442");
 		panelRegistracijaKorisnika.setLayout(null);
 		
@@ -193,14 +304,59 @@ public class AppGlavna {
 		textFieldAdresaRK.setColumns(10);
 		
 		JButton btnRegistrujSeRK = new JButton("Registruj se");
+		btnRegistrujSeRK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String ime = textFieldImeRK.getText();
+					String prezime = textFieldPrezimeRK.getText();
+					String brojTelefona = textFieldBrojTelefonaRK.getText();
+					String password = textFieldSifraRK.getText();
+					String email = textFieldEmailRK.getText();
+					String userTip = "korisnik";
+					String adresa = textFieldAdresaRK.getText();
+					
+					User u = new User(ime, prezime, brojTelefona, password, email, userTip, adresa);
+					Kontroler.getInstance().insertUser(u);
+					JOptionPane.showMessageDialog(panelRegistracijaKorisnika, "Uspesno ste se registrovali.");
+					
+					textFieldImeRK.setText("");
+					textFieldPrezimeRK.setText("");
+					textFieldBrojTelefonaRK.setText("");
+					textFieldSifraRK.setText("");
+					textFieldEmailRK.setText("");
+					textFieldAdresaRK.setText("");
+					
+					panelRegistracijaKorisnika.setVisible(false);
+					panelLogIn.setVisible(true);
+					
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnRegistrujSeRK.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnRegistrujSeRK.setBounds(100, 320, 150, 25);
 		panelRegistracijaRK.add(btnRegistrujSeRK);
 		
 		JButton btnNazadRK = new JButton("Nazad");
+		btnNazadRK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelRegistracijaKorisnika.setVisible(false);
+				panelGlavna.setVisible(true);
+			}
+		});
 		btnNazadRK.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnNazadRK.setBounds(350, 320, 100, 25);
 		panelRegistracijaRK.add(btnNazadRK);
+		
+		
 		
 		JPanel panelRegistracijaRadnika = new JPanel();
 		frmTelesrb.getContentPane().add(panelRegistracijaRadnika, "name_4758566232796");
@@ -266,23 +422,91 @@ public class AppGlavna {
 		panelRegistrujaRR.add(textFieldAdresaRR);
 		textFieldAdresaRR.setColumns(10);
 		
-		JRadioButton rdbtnRadnikRR = new JRadioButton("Radnik");
-		rdbtnRadnikRR.setBounds(100, 305, 70, 23);
-		panelRegistrujaRR.add(rdbtnRadnikRR);
+		rdbtnProdavacRR = new JRadioButton("Prodavac");
+		rdbtnProdavacRR.setBounds(100, 305, 80, 23);
+		panelRegistrujaRR.add(rdbtnProdavacRR);
 		
-		JRadioButton rdbtnAdminRR = new JRadioButton("Admin");
-		rdbtnAdminRR.setBounds(180, 305, 70, 23);
+		rdbtnAdminRR = new JRadioButton("Admin");
+		rdbtnAdminRR.setBounds(190, 305, 70, 23);
 		panelRegistrujaRR.add(rdbtnAdminRR);
 		
 		JButton btnRegistrujSeRR = new JButton("Registruj se");
+		btnRegistrujSeRR.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String ime = textFieldImeRR.getText();
+					String prezime = textFieldPrezimeRR.getText();
+					String brojTelefona = textFieldBrojTelefonaRR.getText();
+					String password = textFieldSifraRR.getText();
+					String email = textFieldEmailRR.getText();
+					String adresa = textFieldAdresaRR.getText();
+					
+					String userTip = "";
+					
+					
+					
+					/*this.setSize(500, 500);
+					
+					this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+					getContentPane().setLayout(null);
+					ButtonGroup zaposlen = new ButtonGroup();
+					zaposlen.add(rdbtnAdminRR);
+					zaposlen.add(rdbtnProdavacRR);
+					
+					this.setVisible(true);
+					
+					rdbtnAdminRR.addActionListener(new ActionListener());
+					rdbtnProdavacRR.addActionListener(ActionListener);*/
+					
+					
+					/*if (rdbtnAdminRR.isSelected()) {
+						userTip = "admin";
+					} else if (rdbtnProdavacRR.isSelected()) {
+						userTip = "prodavac";
+					}*/
+					
+					User u = new User(ime, prezime, brojTelefona, password, email, userTip, adresa);
+					Kontroler.getInstance().insertUser(u);
+					JOptionPane.showMessageDialog(panelRegistracijaRadnika, "Uspesno ste se registrovali.");
+					
+					textFieldImeRK.setText("");
+					textFieldPrezimeRK.setText("");
+					textFieldBrojTelefonaRK.setText("");
+					textFieldSifraRK.setText("");
+					textFieldEmailRK.setText("");
+					textFieldAdresaRK.setText("");
+					rdbtnAdminRR.setSelected(false);
+					rdbtnProdavacRR.setSelected(false);
+					
+					panelRegistracijaRadnika.setVisible(false);
+					panelLogIn.setVisible(true);
+					
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnRegistrujSeRR.setBounds(100, 335, 150, 25);
 		panelRegistrujaRR.add(btnRegistrujSeRR);
 		
 		JButton btnNazadRR = new JButton("Nazad");
+		btnNazadRR.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelAdmin.setVisible(true);
+				panelRegistracijaRadnika.setVisible(false);
+			}
+		});
 		btnNazadRR.setBounds(350, 335, 100, 25);
 		panelRegistrujaRR.add(btnNazadRR);
 		
-		JPanel panelKorisnik = new JPanel();
+		panelKorisnik = new JPanel();
 		frmTelesrb.getContentPane().add(panelKorisnik, "name_7844590625328");
 		panelKorisnik.setLayout(null);
 		
@@ -293,14 +517,38 @@ public class AppGlavna {
 		panelKorisnikK.setLayout(null);
 		
 		JButton btnPostpaidKorisnik = new JButton("PostPaid");
+		btnPostpaidKorisnik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePostPaid pp = new JFramePostPaid();
+				
+				System.out.println();
+				pp.show();
+			}
+		});
 		btnPostpaidKorisnik.setBounds(100, 30, 200, 30);
 		panelKorisnikK.add(btnPostpaidKorisnik);
 		
-		JButton btnDodatnaOpremaIPripaidKorisnik = new JButton("Dodatna Oprema i PriPaid");
-		btnDodatnaOpremaIPripaidKorisnik.setBounds(350, 30, 200, 30);
-		panelKorisnikK.add(btnDodatnaOpremaIPripaidKorisnik);
+		JButton btnPripaidIDodatnaOpremaKorisnik = new JButton("Pripaid i dodatna oprema");
+		btnPripaidIDodatnaOpremaKorisnik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePripaidIDodatnaOprema pido = new JFramePripaidIDodatnaOprema();
+				
+				System.out.println();
+				pido.show();
+			}
+		});
+		btnPripaidIDodatnaOpremaKorisnik.setBounds(350, 30, 200, 30);
+		panelKorisnikK.add(btnPripaidIDodatnaOpremaKorisnik);
 		
 		JButton btnIzlogujSeKorisnik = new JButton("Izloguj se");
+		btnIzlogujSeKorisnik.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelLogIn.setVisible(true);
+				panelKorisnik.setVisible(false);
+				textFieldBrojTelefonaLogIn.setText("");
+				textFieldLozinkaLogIn.setText("");
+			}
+		});
 		btnIzlogujSeKorisnik.setBounds(480, 350, 150, 25);
 		panelKorisnikK.add(btnIzlogujSeKorisnik);
 		
@@ -326,14 +574,14 @@ public class AppGlavna {
 		panelNarudjbinaKorisnik.add(btnObrisiKorpaKorisnik);
 		
 		JLabel lblUkupnaCenaKorpaKorisnik = new JLabel("Ukupna cena:");
-		lblUkupnaCenaKorpaKorisnik.setBounds(430, 190, 74, 14);
+		lblUkupnaCenaKorpaKorisnik.setBounds(400, 190, 104, 14);
 		panelNarudjbinaKorisnik.add(lblUkupnaCenaKorpaKorisnik);
 		
 		JLabel labelCenaKorpaKorisnik = new JLabel("0");
 		labelCenaKorpaKorisnik.setBounds(500, 190, 100, 14);
 		panelNarudjbinaKorisnik.add(labelCenaKorpaKorisnik);
 		
-		JPanel panelProdavac = new JPanel();
+		panelProdavac = new JPanel();
 		frmTelesrb.getContentPane().add(panelProdavac, "name_27468884341717");
 		panelProdavac.setLayout(null);
 		
@@ -344,22 +592,66 @@ public class AppGlavna {
 		panelProdavacP.setLayout(null);
 		
 		JButton btnPostpaidProdavac = new JButton("PostPaid");
+		btnPostpaidProdavac.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePostPaid pp = new JFramePostPaid();
+				
+				System.out.println();
+				pp.show();
+			}
+		});
 		btnPostpaidProdavac.setBounds(50, 50, 250, 40);
 		panelProdavacP.add(btnPostpaidProdavac);
 		
-		JButton btnDodatnaOpremaIPriPaidProdavac = new JButton("Dodatna oprema i PriPaid");
-		btnDodatnaOpremaIPriPaidProdavac.setBounds(50, 120, 250, 40);
-		panelProdavacP.add(btnDodatnaOpremaIPriPaidProdavac);
+		JButton btnPripaidIDodatnaOpremaProdavac = new JButton("Pripaid i dodatna oprema");
+		btnPripaidIDodatnaOpremaProdavac.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePripaidIDodatnaOprema dopp = new JFramePripaidIDodatnaOprema();
+				
+				System.out.println();
+				dopp.show();
+			}
+		});
+		btnPripaidIDodatnaOpremaProdavac.setBounds(50, 120, 250, 40);
+		panelProdavacP.add(btnPripaidIDodatnaOpremaProdavac);
 		
 		JButton btnZahtevKorisnikaProdavac = new JButton("Zahtev Korisnika");
+		btnZahtevKorisnikaProdavac.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrameZahtevKorisnika zk = new JFrameZahtevKorisnika();
+				
+				System.out.println();
+				zk.show();
+			}
+		});
 		btnZahtevKorisnikaProdavac.setBounds(50, 190, 250, 40);
 		panelProdavacP.add(btnZahtevKorisnikaProdavac);
 		
+		JButton btnSpisakKorisnikaProdavac = new JButton("Spisak Korisnika");
+		btnSpisakKorisnikaProdavac.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramaSpisakKorisnika sk = new JFramaSpisakKorisnika();
+				
+				System.out.println();
+				sk.show();
+			}
+		});
+		btnSpisakKorisnikaProdavac.setBounds(50, 260, 250, 40);
+		panelProdavacP.add(btnSpisakKorisnikaProdavac);
+		
 		JButton btnIzlogujSeProdavac = new JButton("Izloguj se");
+		btnIzlogujSeProdavac.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelLogIn.setVisible(true);
+				panelProdavac.setVisible(false);
+				textFieldBrojTelefonaLogIn.setText("");
+				textFieldLozinkaLogIn.setText("");
+			}
+		});
 		btnIzlogujSeProdavac.setBounds(460, 285, 100, 25);
 		panelProdavacP.add(btnIzlogujSeProdavac);
 		
-		JPanel panelAdmin = new JPanel();
+		panelAdmin = new JPanel();
 		panelAdmin.setBorder(null);
 		frmTelesrb.getContentPane().add(panelAdmin, "name_10979612927143");
 		panelAdmin.setLayout(null);
@@ -371,31 +663,122 @@ public class AppGlavna {
 		panelAdminA.setLayout(null);
 		
 		JButton btnPostpaidAdmin = new JButton("PostPaid");
-		btnPostpaidAdmin.setBounds(50, 50, 200, 40);
+		btnPostpaidAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePostPaid pp = new JFramePostPaid();
+				
+				System.out.println();
+				pp.show();
+			}
+		});
+		btnPostpaidAdmin.setBounds(60, 45, 200, 40);
 		panelAdminA.add(btnPostpaidAdmin);
 		
-		JButton btnDodatnaOpremaIPripaidAdmin = new JButton("Dodatna oprema i PriPaid");
-		btnDodatnaOpremaIPripaidAdmin.setBounds(50, 190, 200, 40);
-		panelAdminA.add(btnDodatnaOpremaIPripaidAdmin);
+		JButton btnPripaidIDodatnaOpremaAdmin = new JButton("Pripaid i dodatn oprema");
+		btnPripaidIDodatnaOpremaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramePripaidIDodatnaOprema dopp = new JFramePripaidIDodatnaOprema();
+				
+				System.out.println();
+				dopp.show();
+			}
+		});
+		btnPripaidIDodatnaOpremaAdmin.setBounds(330, 45, 200, 40);
+		panelAdminA.add(btnPripaidIDodatnaOpremaAdmin);
 		
 		JButton btnZahtevKorisnikaAdmin = new JButton("Zahtev Korisnika");
-		btnZahtevKorisnikaAdmin.setBounds(50, 120, 200, 40);
+		btnZahtevKorisnikaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrameZahtevKorisnika zk = new JFrameZahtevKorisnika();
+				
+				System.out.println();
+				zk.show();
+			}
+		});
+		btnZahtevKorisnikaAdmin.setBounds(330, 115, 200, 40);
 		panelAdminA.add(btnZahtevKorisnikaAdmin);
 		
 		JButton btnRegistracijaRadnikaAdmin = new JButton("Registracija radnika");
-		btnRegistracijaRadnikaAdmin.setBounds(300, 120, 200, 40);
+		btnRegistracijaRadnikaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelRegistracijaRadnika.setVisible(true);
+				panelAdmin.setVisible(false);
+			}
+		});
+		btnRegistracijaRadnikaAdmin.setBounds(60, 115, 200, 40);
 		panelAdminA.add(btnRegistracijaRadnikaAdmin);
 		
-		JButton btnUsersAdmin = new JButton("Users");
-		btnUsersAdmin.setBounds(300, 50, 200, 40);
-		panelAdminA.add(btnUsersAdmin);
-		
 		JButton btnUnosPodatakaAdmin = new JButton("Unos podataka");
-		btnUnosPodatakaAdmin.setBounds(300, 190, 200, 40);
+		btnUnosPodatakaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrameUnosPodataka up = new JFrameUnosPodataka();
+				
+				System.out.println();
+				up.show();
+				
+			}
+		});
+		btnUnosPodatakaAdmin.setBounds(60, 255, 200, 40);
 		panelAdminA.add(btnUnosPodatakaAdmin);
 		
+		JButton btnSpisakRadnikaAdmin = new JButton("Spisak radnika");
+		btnSpisakRadnikaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrameSpisakRadnika up = new JFrameSpisakRadnika();
+				
+				System.out.println();
+				up.show();
+			}
+		});
+		btnSpisakRadnikaAdmin.setBounds(60, 185, 200, 40);
+		panelAdminA.add(btnSpisakRadnikaAdmin);
+		
+		JButton btnSpisakKorisnikaAdmin = new JButton("Spisak Korisnika");
+		btnSpisakKorisnikaAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFramaSpisakKorisnika sk = new JFramaSpisakKorisnika();
+				
+				System.out.println();
+				sk.show();
+			}
+		});
+		btnSpisakKorisnikaAdmin.setBounds(330, 185, 200, 40);
+		panelAdminA.add(btnSpisakKorisnikaAdmin);
+		
 		JButton btnIzlogujSeAdmin = new JButton("Izloguj se");
+		btnIzlogujSeAdmin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelLogIn.setVisible(true);
+				panelAdmin.setVisible(false);
+				textFieldBrojTelefonaLogIn.setText("");
+				textFieldLozinkaLogIn.setText("");
+			}
+		});
 		btnIzlogujSeAdmin.setBounds(460, 285, 100, 25);
 		panelAdminA.add(btnIzlogujSeAdmin);
 	}
+	
+	public void Grup() {
+		String userTip = "";
+				
+		
+		ButtonGroup zaposlen = new ButtonGroup();
+		zaposlen.add(rdbtnAdminRR);
+		zaposlen.add(rdbtnProdavacRR);
+		
+		//this.setVisible(true);
+		
+		//rdbtnAdminRR.addActionListener(new ActionListener());
+		//rdbtnProdavacRR.addActionListener(ActionListener);
+		
+		
+		if (rdbtnAdminRR.isSelected()) {
+			userTip = "admin";
+		} else if (rdbtnProdavacRR.isSelected()) {
+			userTip = "prodavac";
+		}
+	}
+	
+	
+	
 }

@@ -13,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import com.toedter.calendar.JDateChooser;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JFrameZahtevKorisnika extends JFrame {
 
@@ -65,9 +68,9 @@ public class JFrameZahtevKorisnika extends JFrame {
 		lblDodajRacun.setBounds(40, 200, 40, 15);
 		panelRacun.add(lblDodajRacun);
 		
-		JButton btnDodatnaOpremaIPriPaidRacun = new JButton("Dodatna oprema i PriPaid");
-		btnDodatnaOpremaIPriPaidRacun.setBounds(90, 195, 200, 23);
-		panelRacun.add(btnDodatnaOpremaIPriPaidRacun);
+		JButton btnPripaidIDodatnaOpremaRacun = new JButton("Pripaid i dodatna oprema");
+		btnPripaidIDodatnaOpremaRacun.setBounds(90, 195, 200, 23);
+		panelRacun.add(btnPripaidIDodatnaOpremaRacun);
 		
 		JLabel lblObrisiStavkuRacun = new JLabel("Obrisi stavku:");
 		lblObrisiStavkuRacun.setBounds(400, 200, 80, 15);
@@ -82,35 +85,55 @@ public class JFrameZahtevKorisnika extends JFrame {
 		panelRacun.add(lblIzmeniStatusBrojaTelefonaRacun);
 		
 		JComboBox comboBoxStatusRacun = new JComboBox();
-		comboBoxStatusRacun.setBounds(200, 237, 90, 20);
+		comboBoxStatusRacun.setModel(new DefaultComboBoxModel(new String[] {"SLOBODAN", "ZAUZET"}));
+		comboBoxStatusRacun.setToolTipText("");
+		comboBoxStatusRacun.setBounds(200, 236, 120, 23);
 		panelRacun.add(comboBoxStatusRacun);
 		
 		JLabel lblDatumPotpisivanjaUgovoraRacun = new JLabel("Datum potpisivanja ugovora:");
-		lblDatumPotpisivanjaUgovoraRacun.setBounds(400, 240, 150, 15);
+		lblDatumPotpisivanjaUgovoraRacun.setBounds(40, 280, 150, 15);
 		panelRacun.add(lblDatumPotpisivanjaUgovoraRacun);
 		
 		JDateChooser dateChooserDatumPotpisivanjaUgovoraRacun = new JDateChooser();
-		dateChooserDatumPotpisivanjaUgovoraRacun.setBounds(550, 235, 110, 20);
+		dateChooserDatumPotpisivanjaUgovoraRacun.setBounds(200, 280, 120, 20);
 		panelRacun.add(dateChooserDatumPotpisivanjaUgovoraRacun);
 		
 		JLabel lblUkupnaCenaRacun = new JLabel("Ukupna cena:");
-		lblUkupnaCenaRacun.setBounds(40, 280, 75, 15);
+		lblUkupnaCenaRacun.setBounds(40, 320, 75, 15);
 		panelRacun.add(lblUkupnaCenaRacun);
 		
 		JLabel labelUkupnaCenaRacun = new JLabel("0");
-		labelUkupnaCenaRacun.setBounds(120, 280, 80, 15);
+		labelUkupnaCenaRacun.setBounds(120, 320, 80, 15);
 		panelRacun.add(labelUkupnaCenaRacun);
 		
 		JLabel lblMesecnaRataRacun = new JLabel("Mesecna rata:");
-		lblMesecnaRataRacun.setBounds(40, 320, 75, 15);
+		lblMesecnaRataRacun.setBounds(220, 320, 75, 15);
 		panelRacun.add(lblMesecnaRataRacun);
 		
 		JLabel labelMesecnaRataRacun = new JLabel("0");
-		labelMesecnaRataRacun.setBounds(120, 320, 46, 14);
+		labelMesecnaRataRacun.setBounds(300, 320, 46, 14);
 		panelRacun.add(labelMesecnaRataRacun);
 		
 		JButton btnStampajRacun = new JButton("Stampaj");
-		btnStampajRacun.setBounds(620, 350, 100, 25);
+		btnStampajRacun.setBounds(550, 310, 100, 25);
 		panelRacun.add(btnStampajRacun);
+		
+		JButton btnSacuvajIzmenuStatusa = new JButton("Sacuvaj izmenu statusa");
+		btnSacuvajIzmenuStatusa.setBounds(340, 235, 150, 25);
+		panelRacun.add(btnSacuvajIzmenuStatusa);
+		
+		JButton btnNazad = new JButton("Nazad");
+		btnNazad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		});
+		btnNazad.setBounds(620, 360, 100, 25);
+		panelRacun.add(btnNazad);
+	}
+	
+	//METODA KOJA ZATVARA TRENUTNI FRAJM
+	public void close(){
+		this.setVisible(false);
 	}
 }
